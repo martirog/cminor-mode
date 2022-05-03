@@ -1,0 +1,2 @@
+* C minor mode
+  for now only used to automate TAGS generation
