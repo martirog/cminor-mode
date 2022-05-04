@@ -28,13 +28,45 @@
   (setq-local etags-wrapper-tag-file-post-fix cminor-tag-file-post-fix)
   (setq-local etags-wrapper-use-vc-root-for-tags cminor-use-vc-root-for-tags))
 
+(defun cminor--tag-beg ()
+  "find the start of the start of the system verilog expression. this only looks at words for now(so I lied in the first sentece)"
+  (let ((p
+         (save-excursion
+           (backward-word 1)
+           (if (memq (preceding-char) '(?$ ?`))
+               (backward-char))
+           (point))))
+    p))
+
+(require 'icrib-buffer-and-tag-compleation nil t)
+(if (featurep 'icrib-buffer-and-tag-compleation)
+    (defun cminor--expand-abbrev (dummy)
+      (let ((init-string (buffer-substring-no-properties (cminor--tag-beg) (point))))
+        (icrib-buffer-and-tag-compleation init-string '("c-mode" "cc-mode")))))
+
+(defun cminor--tab ()
+  "extend the verilog mode tab so that if the verilog-mode tab has no affect and we are at the end of a word we use the vminor--expand-abbrev function"
+  (interactive)
+  (let ((boi-point
+           (save-excursion
+             (back-to-indentation)
+             (point))))
+    (c-indent-line-or-region)
+    (if (and
+         (save-excursion
+          (back-to-indentation)
+          (= (point) boi-point))
+         (looking-at "\\>"))
+        (cminor--expand-abbrev nil))))
+
 (define-minor-mode cminor-mode
   "set up verilog minor mode"
   :lighter " cmin"
-  ;;:keymap (let ((map (make-sparse-keymap)))
-  ;;          (define-key map "\t" 'cminor-verilog-tab)
+  :keymap (let ((map (make-sparse-keymap)))
+            (when (featurep 'icrib-buffer-and-tag-compleation)
+                (define-key map "\t" 'cminor--tab))
   ;;          (define-key map (kbd "C-c a") 'hs-toggle-hiding)
-  ;;          map)
+            map)
   (cminor--setup-etags-wrapper)
   (setq tags-table-list
                (etags-wrapper-generate-tags-list cminor-path-to-repos))
