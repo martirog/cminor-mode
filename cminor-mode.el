@@ -42,7 +42,7 @@
 (if (featurep 'icrib-buffer-and-tag-compleation)
     (defun cminor--expand-abbrev (dummy)
       (let ((init-string (buffer-substring-no-properties (cminor--tag-beg) (point))))
-        (icrib-buffer-and-tag-compleation init-string '("c-mode" "cc-mode")))))
+        (icrib-buffer-and-tag-compleation init-string '("c-mode" "cc-mode" "c++-mode")))))
 
 (defun cminor--tab ()
   "extend the verilog mode tab so that if the verilog-mode tab has no affect and we are at the end of a word we use the vminor--expand-abbrev function"
@@ -68,7 +68,7 @@
   ;;          (define-key map (kbd "C-c a") 'hs-toggle-hiding)
             map)
   (cminor--setup-etags-wrapper)
-  (setq tags-table-list
+  (setq-local tags-table-list
                (etags-wrapper-generate-tags-list cminor-path-to-repos))
   ;;(add-hook 'verilog-mode-hook 'hs-minor-mode)
   ;;(add-to-list 'hs-special-modes-alist (list 'verilog-mode (list verilog-beg-block-re-ordered 0) "\\<end\\>" nil 'verilog-forward-sexp-function))
