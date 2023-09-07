@@ -26,7 +26,9 @@
   (setq-local etags-wrapper-file-extention cminor-file-extention)
   (setq-local etags-wrapper-tag-path cminor-tag-path)
   (setq-local etags-wrapper-tag-file-post-fix cminor-tag-file-post-fix)
-  (setq-local etags-wrapper-use-vc-root-for-tags cminor-use-vc-root-for-tags))
+  (setq-local etags-wrapper-use-vc-root-for-tags cminor-use-vc-root-for-tags)
+  (setq-local tags-table-list
+              (etags-wrapper-generate-tags-list)))
 
 (defun cminor--tag-beg ()
   "find the start of the start of the system verilog expression. this only looks at words for now(so I lied in the first sentece)"
@@ -68,8 +70,6 @@
   ;;          (define-key map (kbd "C-c a") 'hs-toggle-hiding)
             map)
   (cminor--setup-etags-wrapper)
-  (setq-local tags-table-list
-               (etags-wrapper-generate-tags-list cminor-path-to-repos))
   ;;(add-hook 'verilog-mode-hook 'hs-minor-mode)
   ;;(add-to-list 'hs-special-modes-alist (list 'verilog-mode (list verilog-beg-block-re-ordered 0) "\\<end\\>" nil 'verilog-forward-sexp-function))
   (flyspell-prog-mode))
